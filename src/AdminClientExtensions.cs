@@ -17,5 +17,10 @@ namespace AdminClient.Extensions
                 }
             });
         }
+        
+        public static async Task DeleteTopicAsync(this IAdminClient client, string topic)
+        {
+            await client.DeleteTopicsAsync(new[] {topic});
+        }
     }
 }
