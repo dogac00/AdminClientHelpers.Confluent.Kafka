@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
@@ -40,6 +41,21 @@ namespace AdminClient.Extensions
             }
 
             return topicList;
+        }
+        
+        public static bool TopicExists(this IAdminClient client, string topic)
+        {
+            var topics = ListTopics(client);
+
+            foreach (var topicName in topics)
+            {
+                if (topicName == topic)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
