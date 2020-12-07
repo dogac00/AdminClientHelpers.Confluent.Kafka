@@ -1,60 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 
-namespace AdminClient.Extensions
+namespace AdminClientHelpers.Confluent.Kafka
 {
     public static class AdminClientExtensions
     {
-        public static async Task CreateDefaultTopicAsync(this IAdminClient client, string topic)
+        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
+        
+        public static async Task CreateTopicAsync(this IAdminClient client, string topic, int partitions)
         {
-            await client.CreateTopicsAsync(new TopicSpecification[]
+            await client.CreateTopicsAsync(new[]
             {
                 new TopicSpecification
                 {
                     Name = topic,
-                    NumPartitions = 10
+                    NumPartitions = partitions
                 }
+            }, new CreateTopicsOptions
+            {
+                OperationTimeout = Timeout,
+                RequestTimeout = Timeout
             });
+        }
+
+        public static async Task CreateDefaultTopicAsync(this IAdminClient client, string topic)
+        {
+            await CreateTopicAsync(client, topic, 10);
         }
         
         public static async Task DeleteTopicAsync(this IAdminClient client, string topic)
         {
-            await client.DeleteTopicsAsync(new[] {topic});
+            await client.DeleteTopicsAsync(new[] {topic}, new DeleteTopicsOptions
+            {
+                OperationTimeout = Timeout,
+                RequestTimeout = Timeout
+            });
         }
         
         public static List<string> ListTopics(this IAdminClient client)
         {
-            var metadata = client.GetMetadata(TimeSpan.FromSeconds(3));
-
-            var metadataTopics = metadata.Topics;
-            var topicList = new List<string>();
-            
-            foreach (var metadataTopic in metadataTopics)
-            {
-                var name = metadataTopic.Topic;
-                
-                topicList.Add(name);
-            }
-
-            return topicList;
+            return client.GetMetadata(Timeout)
+                .Topics
+                .Select(t => t.Topic)
+                .ToList();
         }
         
         public static bool TopicExists(this IAdminClient client, string topic)
         {
-            var topics = ListTopics(client);
+            return ListTopics(client)
+                .Contains(topic);
+        }
+        
+        public static TopicMetadata? GetTopicMetadata(this IAdminClient client, string topic)
+        {
+            return client.GetMetadata(Timeout)
+                .Topics
+                .FirstOrDefault(t => t.Topic == topic);
+        }
+        
+        public static int GetPartitionCount(this IAdminClient client, string topic)
+        {
+            var topicMetadata = GetTopicMetadata(client, topic);
 
-            foreach (var topicName in topics)
+            if (topicMetadata == null)
             {
-                if (topicName == topic)
-                {
-                    return true;
-                }
+                throw new Exception("Unknown topic.");
             }
 
-            return false;
+            return topicMetadata.Partitions.Count;
         }
     }
 }
