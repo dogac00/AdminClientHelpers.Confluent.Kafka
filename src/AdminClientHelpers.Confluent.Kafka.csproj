@@ -7,7 +7,7 @@
         <Authors>Dogac Akyildiz</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
-        <PackageVersion>1.0.2</PackageVersion>
+        <PackageVersion>1.0.3</PackageVersion>
         <RepositoryUrl>https://github.com/dogac00/AdminClientHelpers.Confluent.Kafka</RepositoryUrl>
         <Description>AdminClientExtensions for easier use of AdminClient API in Apache Kafka.
 AdminClientHelper class for static utility methods for AdminClient API.</Description>
