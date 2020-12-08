@@ -26,11 +26,6 @@ namespace AdminClientHelpers.Confluent.Kafka
                 RequestTimeout = Timeout
             });
         }
-
-        public static async Task CreateDefaultTopicAsync(this IAdminClient client, string topic)
-        {
-            await CreateTopicAsync(client, topic, 10);
-        }
         
         public static async Task DeleteTopicAsync(this IAdminClient client, string topic)
         {

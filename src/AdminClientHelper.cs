@@ -14,12 +14,6 @@ namespace AdminClientHelpers.Confluent.Kafka
             }).Build();
         }
         
-        public static async Task CreateDefaultTopicAsync(string bootstrapServers,
-            string topic)
-        {
-            await CreateTopicAsync(bootstrapServers, topic, 10);
-        }
-
         public static async Task CreateTopicAsync(string bootstrapServers,
             string topic,
             int partitions)
