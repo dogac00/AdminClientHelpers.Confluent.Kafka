@@ -9,7 +9,7 @@ namespace AdminClientHelpers.Confluent.Kafka
 {
     public static class AdminClientExtensions
     {
-        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
         
         public static async Task CreateTopicAsync(this IAdminClient client, string topic, int partitions)
         {
